@@ -1,10 +1,18 @@
-﻿using System;
+﻿using O3.SeaBattle.Logic;
+using System;
 
-namespace O3.SeaBattle.Logic
+namespace O3.SeaBattle.Service.Parsers
 {
-    public static class ShipFactory
+    public class ShipFactory
     {
-        public static Ship Create(string shipSpecification)
+        private readonly ILocationParser _locationParser;
+
+        public ShipFactory(ILocationParser locationParser)
+        {
+            _locationParser = locationParser;
+        }
+
+        public Ship Create(string shipSpecification)
         {
             if (shipSpecification is null)
                 throw new ArgumentNullException(nameof(shipSpecification));
@@ -19,8 +27,8 @@ namespace O3.SeaBattle.Logic
             }
 
             return new Ship(
-                LocationFactory.Create(corners[0]), 
-                LocationFactory.Create(corners[1])
+                _locationParser.Parse(corners[0]),
+                _locationParser.Parse(corners[1])
                 );
         }
     }

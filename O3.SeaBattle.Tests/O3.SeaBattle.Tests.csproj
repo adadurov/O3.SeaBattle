@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\O3.SeaBattle.Logic\O3.SeaBattle.Logic.csproj" />
+    <ProjectReference Include="..\O3.SeaBattle.Service\O3.SeaBattle.Service.csproj" />
   </ItemGroup>
 
 </Project>

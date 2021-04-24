@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using O3.SeaBattle.Logic;
 
-namespace O3.SeaBattle.Tests
+namespace O3.SeaBattle.Tests.Logic
 {
     [TestFixture]
     public class GameFinishTest
@@ -12,10 +12,10 @@ namespace O3.SeaBattle.Tests
         {
             var g = new Game(
                 size: 1,
-                new[] { ShipFactory.Create("1A 1A") }
+                new[] { TestShipFactory.A1 }
                 );
 
-            var shotResult = g.Shot("1A");
+            var shotResult = g.Shot(new Cell(0,0));
 
             shotResult.GameFinished.Should().Be(true);
             shotResult.Destroyed.Should().Be(true);

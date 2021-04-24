@@ -6,7 +6,7 @@ namespace O3.SeaBattle.Logic
 {
     public class Game
     {
-        public static int MaxSize => 255;
+        public static short MaxSize { get; } = 255;
 
         private readonly short _size;
         private readonly int _originalShipCount;
@@ -37,10 +37,9 @@ namespace O3.SeaBattle.Logic
                 throw new ArgumentException("Cannot start sea battle game without a ship.", nameof(liveShips));
             }
 
-            ValidateShipLocations(size, liveShips);
+            _liveShips = ConvertAndValidateShipLocations(size, liveShips);
 
             _size = size;
-            _liveShips = liveShips.ToHashSet();
             _shotMarks = new ShotCache(size, size);
             _shotCount = 0;
             _knockedCount = 0;
@@ -48,24 +47,39 @@ namespace O3.SeaBattle.Logic
             _originalShipCount = _liveShips.Count;
         }
 
-        public bool IsValidLocation(Location loc) => IsValidLocation(_size, loc);
+        public bool IsLocationInRange(Cell loc) => IsInRange(_size, loc);
 
-        private static bool IsValidLocation(short size, Location loc) =>
-            loc.Row - Location.Origin.Row >= 0 &&
-            loc.Row - Location.Origin.Row < size &&
-            loc.Col - Location.Origin.Col >= 0 &&
-            loc.Col - Location.Origin.Col < size;
+        private static bool IsInRange(short size, Cell loc) =>
+            loc.Row >= 0 &&
+            loc.Row < size &&
+            loc.Col >= 0 &&
+            loc.Col < size;
 
-        private static void ValidateShipLocations(short size, IEnumerable<Ship> liveShips)
+        private static HashSet<Ship> ConvertAndValidateShipLocations(short size, IEnumerable<Ship> liveShips)
         {
-            var badShipsExist = liveShips.Any(s => !IsValidLocation(size, s.LeftTop) || !IsValidLocation(size, s.RightBottom));
+            var hashSet = new HashSet<Ship>(liveShips.Count());
 
-            if (badShipsExist)
+            foreach (var candidate in liveShips)
             {
-                throw new ArgumentException(
-                    $"At least one ship is not withint the matrix of {size}x{size}",
-                    nameof(liveShips));
+                var isOutOfRange =  !IsInRange(size, candidate.LeftTop) || !IsInRange(size, candidate.RightBottom);
+
+                if (isOutOfRange)
+                {
+                    throw new ArgumentException(
+                        $"At least one ship ({candidate}) is not entirely within the matrix of {size}x{size}.",
+                        nameof(liveShips));
+                }
+
+                if (hashSet.Any(s => s != candidate && candidate.Overlaps(s)))
+                {
+                    throw new ArgumentException(
+                        $"At least one ship overlaps {candidate}.",
+                        nameof(liveShips));
+                }
+
+                hashSet.Add(candidate);
             }
+            return hashSet;
         }
 
         public GameStats GetStatistics() => new() {
@@ -75,19 +89,14 @@ namespace O3.SeaBattle.Logic
             ShotCount = _shotCount
         };
 
-        public ShotResult Shot(string location) => Shot(LocationFactory.Create(location));
-
-        public ShotResult Shot(Location location)
+        public ShotResult Shot(Cell location)
         {
+            if (!IsLocationInRange(location))
+                return ShotResult.InvalidShotLocation;
             if (EverFiredOn(location))
-            {
                 return ShotResult.DuplicateShot;
-            }
-
             if (!_liveShips.Any())
-            {
-                return GameEnded();
-            }
+                return GameAlreadyFinished();
 
             RememberShot(location);
             _shotCount++;
@@ -95,27 +104,22 @@ namespace O3.SeaBattle.Logic
             var targetShip = FindTargetShip(location);
             
             if (targetShip is null)
-            {
                 return ShotResult.MissedShot;
-            }
 
             var shotsBefore = targetShip.AddShot();
+
             if (shotsBefore == 0)
-            {
                 _knockedCount++;
-            }
 
             if (targetShip.IsAlive)
-            {
                 return new ShotResult { Knocked = true };
-            }
 
             return DestroyShip(targetShip);
         }
 
-        private ShotResult GameEnded() => new ShotResult { GameFinished = true };
+        private ShotResult GameAlreadyFinished() => new ShotResult { GameFinished = true };
 
-        private Ship FindTargetShip(Location newShot)
+        private Ship FindTargetShip(Cell newShot)
         {
             return _liveShips.FirstOrDefault(s => s.SpansOver(newShot));
         }
@@ -128,9 +132,7 @@ namespace O3.SeaBattle.Logic
             var gameFinished = ! _liveShips.Any();
 
             if (gameFinished)
-            {
                 return ShotResult.FinalShot;
-            }
 
             return new () 
             {
@@ -139,8 +141,8 @@ namespace O3.SeaBattle.Logic
             };
         }
 
-        private void RememberShot(Location shot) => _shotMarks.AddShotMark(shot);
+        private void RememberShot(Cell shot) => _shotMarks.AddShotMark(shot);
 
-        private bool EverFiredOn(Location newShot) => _shotMarks.EverFiredOn(newShot);
+        private bool EverFiredOn(Cell newShot) => _shotMarks.EverFiredOn(newShot);
     }
 }

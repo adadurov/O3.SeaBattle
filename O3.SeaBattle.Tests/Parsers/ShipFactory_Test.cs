@@ -1,13 +1,15 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using O3.SeaBattle.Logic;
+using O3.SeaBattle.Service.Parsers;
 using System;
 
-namespace O3.SeaBattle.Tests
+namespace O3.SeaBattle.Tests.Parsers
 {
     [TestFixture]
     public class ShipFactoryTest
     {
+        private ShipFactory ShipFactory => new ShipFactory(new LocationParser(1, 'A', short.MaxValue));
+
         [Test]
         public void Create_WithNullSpec_Should_Throw()
         {
@@ -73,17 +75,17 @@ namespace O3.SeaBattle.Tests
             var ship = ShipFactory.Create("1A 2B");
             ship.Should().NotBeNull();
 
-            ship.LeftTop.Row.Should().Be(1);
-            ship.LeftTop.Col.Should().Be('A');
+            ship.LeftTop.Row.Should().Be(0);
+            ship.LeftTop.Col.Should().Be(0);
 
-            ship.LeftBottom.Row.Should().Be(2);
-            ship.LeftBottom.Col.Should().Be('A');
+            ship.LeftBottom.Row.Should().Be(1);
+            ship.LeftBottom.Col.Should().Be(0);
 
-            ship.RightBottom.Row.Should().Be(2);
-            ship.RightBottom.Col.Should().Be('B');
+            ship.RightBottom.Row.Should().Be(1);
+            ship.RightBottom.Col.Should().Be(1);
 
-            ship.RightTop.Row.Should().Be(1);
-            ship.RightTop.Col.Should().Be('B');
+            ship.RightTop.Row.Should().Be(0);
+            ship.RightTop.Col.Should().Be(1);
         }
     }
 }

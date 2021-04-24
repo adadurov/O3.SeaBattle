@@ -4,7 +4,7 @@ namespace O3.SeaBattle.Logic
 {
     public class Ship
     {
-        internal Ship(Location leftTop, Location rightBottom)
+        public Ship(Cell leftTop, Cell rightBottom)
         {
             if (leftTop.Row > rightBottom.Row)
             {
@@ -25,7 +25,7 @@ namespace O3.SeaBattle.Logic
         /// <summary>
         /// Tests whether the ship spans over the specified cell
         /// </summary>
-        public bool SpansOver(Location cell)
+        public bool SpansOver(Cell cell)
             => cell.Row >= LeftTop.Row &&
                cell.Row <= RightBottom.Row &&
                cell.Col >= LeftTop.Col &&
@@ -33,7 +33,7 @@ namespace O3.SeaBattle.Logic
 
         public int AddShot() => _shotCount++;
 
-        public bool IntersectsWith(Ship that)
+        public bool Overlaps(Ship that)
         {
             static bool ContainsAnyCorner(Ship a, Ship b)
                 => a.SpansOver(b.LeftTop) ||
@@ -48,16 +48,18 @@ namespace O3.SeaBattle.Logic
 
         private int _shotCount = 0;
 
-        public Location LeftTop { get; internal set; }
+        public Cell LeftTop { get; internal set; }
 
-        public Location RightBottom { get; internal set; }
+        public Cell RightBottom { get; internal set; }
 
-        public Location LeftBottom => new () { Col = LeftTop.Col, Row = RightBottom.Row };
+        public Cell LeftBottom => new () { Col = LeftTop.Col, Row = RightBottom.Row };
 
-        public Location RightTop => new () { Col = RightBottom.Col, Row = LeftTop.Row };
+        public Cell RightTop => new () { Col = RightBottom.Col, Row = LeftTop.Row };
 
         public bool IsAlive => _size > _shotCount;
 
         public override int GetHashCode() => HashCode.Combine(LeftTop.Row, LeftTop.Col);
+
+        public override string ToString() => $"[{LeftTop} {RightBottom}]";
     }
 }
