@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "O3.SeaBattle.Logic", "O3.SeaBattle.Logic\O3.SeaBattle.Logic.csproj", "{368B7EFA-9823-4BFB-A3D3-EB8E685397F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "O3.SeaBattle.Tests", "O3.SeaBattle.Tests\O3.SeaBattle.Tests.csproj", "{1DEA3C4E-C556-4346-A859-C43599B425F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A4717608-D9B0-4566-8559-C888FB4CCCB1}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "O3.SeaBattle.Service", "O3.SeaBattle.Service\O3.SeaBattle.Service.csproj", "{A7D93DE7-048C-4D77-AE4A-AE681B4FAD4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{368B7EFA-9823-4BFB-A3D3-EB8E685397F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{368B7EFA-9823-4BFB-A3D3-EB8E685397F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{368B7EFA-9823-4BFB-A3D3-EB8E685397F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{368B7EFA-9823-4BFB-A3D3-EB8E685397F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DEA3C4E-C556-4346-A859-C43599B425F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DEA3C4E-C556-4346-A859-C43599B425F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DEA3C4E-C556-4346-A859-C43599B425F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DEA3C4E-C556-4346-A859-C43599B425F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7D93DE7-048C-4D77-AE4A-AE681B4FAD4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7D93DE7-048C-4D77-AE4A-AE681B4FAD4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7D93DE7-048C-4D77-AE4A-AE681B4FAD4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7D93DE7-048C-4D77-AE4A-AE681B4FAD4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB3F4102-321A-415A-B7EF-ACE46E8E27F3}
+	EndGlobalSection
+EndGlobal
