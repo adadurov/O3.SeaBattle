@@ -43,7 +43,7 @@ namespace O3.SeaBattle.Tests
             }
 
             var ships = CreateShips(GameSize);
-            var largeGame = new Game(GameSize, ships);
+            var largeGame = new Game(GameSize, ships, LocationValidators.Default);
 
             largeGame.GetStatistics().ShipCount.Should().Be(ships.Count);
 

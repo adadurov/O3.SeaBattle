@@ -8,12 +8,9 @@ namespace O3.SeaBattle.Service.Services
         private Game _game;
         private int _matrixSize;
 
-        public bool IsGameInProgress => _game != null && !_game.Finished;
+        public bool IsGameStarted => _game != null;
 
-        public Game GetGame()
-        {
-            return _game;
-        }
+        public bool IsGameFinished => _game != null && _game.Finished;
 
         public void SetMatrixSize(int size)
         {
@@ -22,9 +19,17 @@ namespace O3.SeaBattle.Service.Services
 
         public void BeginGame(IEnumerable<Ship> ships)
         {
-            _game = new Game(_matrixSize, ships);
+            _game = new Game(_matrixSize, ships, LocationValidators.Default);
         }
 
+        public ShotResult Shot(Cell targetCell) => _game.Shot(targetCell);
+
         public int GetMaxSize() => GameConfig.MaxSize;
+
+        public bool CanShoot() => _game is not null;
+
+        public GameStats GetStatistics() => _game.GetStatistics();
+
+        public void Reset() => _game = null;
     }
 }

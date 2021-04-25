@@ -31,7 +31,8 @@ namespace O3.SeaBattle.Logic
                cell.Col >= LeftTop.Col &&
                cell.Col <= RightBottom.Col;
 
-        public int AddShot() => _shotCount++;
+        public int AddShot() 
+            => _shotCount++;
 
         public bool Overlaps(Ship that)
         {
@@ -48,17 +49,15 @@ namespace O3.SeaBattle.Logic
 
         private int _shotCount = 0;
 
-        public Cell LeftTop { get; internal set; }
+        public Cell LeftTop { get; init; }
 
-        public Cell RightBottom { get; internal set; }
+        public Cell RightBottom { get; init; }
 
         public Cell LeftBottom => new () { Col = LeftTop.Col, Row = RightBottom.Row };
 
         public Cell RightTop => new () { Col = RightBottom.Col, Row = LeftTop.Row };
 
         public bool IsAlive => _size > _shotCount;
-
-        public override int GetHashCode() => HashCode.Combine(LeftTop.Row, LeftTop.Col);
 
         public override string ToString() => $"[{LeftTop} {RightBottom}]";
     }

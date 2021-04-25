@@ -13,7 +13,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 2,
-                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) }
+                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) },
+                LocationValidators.Default
                 );
 
             var stat0 = g.GetStatistics();
@@ -29,7 +30,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 2,
-                new[] { new Ship(new Cell(0,0), new Cell(0,1)) }
+                new[] { new Ship(new Cell(0,0), new Cell(0,1)) },
+                LocationValidators.Default
                 );
 
             var stat0 = g.GetStatistics();
@@ -49,7 +51,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 2,
-                new[] { new Ship(new Cell(0,0), new Cell(0,1)) }
+                new[] { new Ship(new Cell(0,0), new Cell(0,1)) },
+                LocationValidators.Default
                 );
 
             var stat0 = g.GetStatistics();
@@ -66,7 +69,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 2,
-                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) }
+                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) },
+                LocationValidators.Default
                 );
 
             var outOfRowRangeResult = g.Shot(new Cell(2, 0));
@@ -78,7 +82,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 2,
-                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) }
+                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) },
+                LocationValidators.Default
                 );
 
             var outOfColRangeResult = g.Shot(new Cell(0, 2));
@@ -91,7 +96,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 2,
-                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) }
+                new[] { new Ship(new Cell(0, 0), new Cell(0, 1)) },
+                LocationValidators.Default
                 );
 
             var stat0 = g.GetStatistics();
@@ -113,7 +119,8 @@ namespace O3.SeaBattle.Tests.Logic
                 new[] { 
                     new Ship(new Cell(0, 0), new Cell(0, 1)),
                     new Ship(new Cell(3, 0), new Cell(3, 1))
-                }
+                },
+                LocationValidators.Default
             );
 
             var stat0 = g.GetStatistics();

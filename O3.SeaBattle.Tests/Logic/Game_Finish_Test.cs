@@ -12,7 +12,8 @@ namespace O3.SeaBattle.Tests.Logic
         {
             var g = new Game(
                 size: 1,
-                new[] { TestShipFactory.A1 }
+                new[] { TestShipFactory.A1 },
+                LocationValidators.Default
                 );
 
             var shotResult = g.Shot(new Cell(0,0));

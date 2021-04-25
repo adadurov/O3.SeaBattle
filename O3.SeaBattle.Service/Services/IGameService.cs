@@ -5,13 +5,21 @@ namespace O3.SeaBattle.Service.Services
 {
     public interface IGameService
     {
-        bool IsGameInProgress { get; }
+        int GetMaxSize();
 
-        Game GetGame();
+        bool IsGameStarted { get; }
+
+        bool IsGameFinished { get; }
+
 
         void SetMatrixSize(int size);
 
         void BeginGame(IEnumerable<Ship> ships);
-        int GetMaxSize();
+
+        ShotResult Shot(Cell targetCell);
+
+        GameStats GetStatistics();
+
+        void Reset();
     }
 }

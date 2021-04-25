@@ -36,7 +36,7 @@ namespace O3.SeaBattle.Service.Parsers
             if (locationSpec.Length < 2)
             {
                 throw new ArgumentException(
-                    $"Bad location specified: {locationSpec}. Expected: <decimal_number><char> -- e.g. '{_rowOrigin}{_columnOrigin+1}'");
+                    $"Bad location specified: {locationSpec}. Expected: <decimal_number><letter> -- e.g. '{_rowOrigin}{_columnOrigin+1}'");
             }
 
             var col = locationSpec[^1];
@@ -50,13 +50,15 @@ namespace O3.SeaBattle.Service.Parsers
 
             if (col > _columnOrigin + _maxSize)
             {
-                throw new ArgumentException($"Column (letter) must not exceed '{colOrigin}'+{Game.MaxSize}");
+                throw new ArgumentException($"Column (letter) must not exceed '{colOrigin}'+{_maxSize}");
             }
 
             var row = short.Parse(locationSpec[..^1]);
             if (row < _rowOrigin || row > (_rowOrigin + _maxSize))
             {
-                throw new ArgumentOutOfRangeException("");
+                throw new ArgumentOutOfRangeException(
+                    $"The row index must not be less than {_rowOrigin} and must not exceed ({_rowOrigin+_maxSize})"
+                );
             }
 
             return new Cell(row - _rowOrigin, (short)(col - _columnOrigin));

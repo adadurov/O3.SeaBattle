@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace O3.SeaBattle.Logic
 {
+    /// <summary>
+    /// Implements a sea battle game on a square matrix.
+    /// Methods of the class are not thread safe.
+    /// </summary>
     public class Game
     {
         public static short MaxSize { get; } = 255;
@@ -11,14 +15,15 @@ namespace O3.SeaBattle.Logic
         private readonly int _size;
         private readonly int _originalShipCount;
 
-        private readonly HashSet<Ship> _liveShips;
-        private readonly ShotCache _shotMarks;
+        private readonly IMatrixLocationValidator _locationValidator;
+        private readonly IList<Ship> _liveShips;
+        private readonly ShotMarksMatrix _shotMarks;
 
         private int _shotCount;
         private int _destroyedCount;
         private int _knockedCount;
 
-        public Game(int size, IEnumerable<Ship> liveShips)
+        public Game(int size, IEnumerable<Ship> liveShips, IMatrixLocationValidator locationValidator)
         {
             if (size < 1 || size > Game.MaxSize)
             {
@@ -37,50 +42,21 @@ namespace O3.SeaBattle.Logic
                 throw new ArgumentException("Cannot start sea battle game without a ship.", nameof(liveShips));
             }
 
-            _liveShips = ConvertAndValidateShipLocations(size, liveShips);
+            _locationValidator = locationValidator;
+
+            _locationValidator.ValidateShipLocations(size, liveShips);
+
+            _liveShips = liveShips.ToList();
 
             _size = size;
-            _shotMarks = new ShotCache(size, size);
+            _shotMarks = new ShotMarksMatrix(size, size);
             _shotCount = 0;
             _knockedCount = 0;
             _destroyedCount = 0;
             _originalShipCount = _liveShips.Count;
         }
 
-        public bool IsLocationInRange(Cell loc) => IsInRange(_size, loc);
-
-        private static bool IsInRange(int size, Cell loc) =>
-            loc.Row >= 0 &&
-            loc.Row < size &&
-            loc.Col >= 0 &&
-            loc.Col < size;
-
-        private static HashSet<Ship> ConvertAndValidateShipLocations(int size, IEnumerable<Ship> liveShips)
-        {
-            var hashSet = new HashSet<Ship>(liveShips.Count());
-
-            foreach (var candidate in liveShips)
-            {
-                var isOutOfRange =  !IsInRange(size, candidate.LeftTop) || !IsInRange(size, candidate.RightBottom);
-
-                if (isOutOfRange)
-                {
-                    throw new ArgumentException(
-                        $"At least one ship ({candidate}) is not entirely within the matrix of {size}x{size}.",
-                        nameof(liveShips));
-                }
-
-                if (hashSet.Any(s => s != candidate && candidate.Overlaps(s)))
-                {
-                    throw new ArgumentException(
-                        $"At least one ship overlaps {candidate}.",
-                        nameof(liveShips));
-                }
-
-                hashSet.Add(candidate);
-            }
-            return hashSet;
-        }
+        public bool IsLocationInMatrix(Cell loc) => _locationValidator.IsWithinMatrix(_size, loc);
 
         public GameStats GetStatistics() => new() {
             ShipCount = _originalShipCount,
@@ -91,7 +67,7 @@ namespace O3.SeaBattle.Logic
 
         public ShotResult Shot(Cell location)
         {
-            if (!IsLocationInRange(location))
+            if (!IsLocationInMatrix(location))
                 return ShotResult.InvalidShotLocation;
             if (EverFiredOn(location))
                 return ShotResult.DuplicateShot;

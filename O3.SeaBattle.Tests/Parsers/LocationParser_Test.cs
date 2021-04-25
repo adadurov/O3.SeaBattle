@@ -6,7 +6,7 @@ using System;
 namespace O3.SeaBattle.Tests.Parsers
 {
     [TestFixture]
-    public class LocationFactoryTest
+    public class LocationParserTest
     {
         private static LocationParser LocationParserInstance => new LocationParser(1, 'A', short.MaxValue);
 

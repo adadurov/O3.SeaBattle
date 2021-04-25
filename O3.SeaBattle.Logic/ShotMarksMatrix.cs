@@ -2,12 +2,12 @@
 
 namespace O3.SeaBattle.Logic
 {
-    public class ShotCache
+    public class ShotMarksMatrix
     {
         private readonly BitArray _bits;
         private readonly int _cols;
 
-        public ShotCache(int rows, int cols)
+        public ShotMarksMatrix(int rows, int cols)
         {
             _cols = cols;
             _bits = new BitArray(rows * cols);
