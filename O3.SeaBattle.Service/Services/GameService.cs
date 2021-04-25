@@ -1,14 +1,14 @@
 ﻿using O3.SeaBattle.Logic;
-using System;
 using System.Collections.Generic;
 
 namespace O3.SeaBattle.Service.Services
 {
     public class GameService : IGameService
     {
-        private readonly Game _game;
-
+        private Game _game;
         private int _matrixSize;
+
+        public bool IsGameInProgress => _game != null && !_game.Finished;
 
         public Game GetGame()
         {
@@ -22,7 +22,9 @@ namespace O3.SeaBattle.Service.Services
 
         public void BeginGame(IEnumerable<Ship> ships)
         {
-            throw new NotImplementedException();
+            _game = new Game(_matrixSize, ships);
         }
+
+        public int GetMaxSize() => GameConfig.MaxSize;
     }
 }

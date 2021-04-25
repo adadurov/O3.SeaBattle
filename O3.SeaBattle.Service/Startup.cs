@@ -22,7 +22,8 @@ namespace O3.SeaBattle.Service
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IGameService, GameService>();
-            services.AddSingleton<ILocationParser, LocationParser>();
+            services.AddSingleton<ILocationParser, ConfiguredLocationParser>();
+            services.AddSingleton<ShipFactory, ShipFactory>();
 
             services.AddControllers();
 

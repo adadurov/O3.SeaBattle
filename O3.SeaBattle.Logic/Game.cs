@@ -8,7 +8,7 @@ namespace O3.SeaBattle.Logic
     {
         public static short MaxSize { get; } = 255;
 
-        private readonly short _size;
+        private readonly int _size;
         private readonly int _originalShipCount;
 
         private readonly HashSet<Ship> _liveShips;
@@ -18,7 +18,7 @@ namespace O3.SeaBattle.Logic
         private int _destroyedCount;
         private int _knockedCount;
 
-        public Game(short size, IEnumerable<Ship> liveShips)
+        public Game(int size, IEnumerable<Ship> liveShips)
         {
             if (size < 1 || size > Game.MaxSize)
             {
@@ -49,13 +49,13 @@ namespace O3.SeaBattle.Logic
 
         public bool IsLocationInRange(Cell loc) => IsInRange(_size, loc);
 
-        private static bool IsInRange(short size, Cell loc) =>
+        private static bool IsInRange(int size, Cell loc) =>
             loc.Row >= 0 &&
             loc.Row < size &&
             loc.Col >= 0 &&
             loc.Col < size;
 
-        private static HashSet<Ship> ConvertAndValidateShipLocations(short size, IEnumerable<Ship> liveShips)
+        private static HashSet<Ship> ConvertAndValidateShipLocations(int size, IEnumerable<Ship> liveShips)
         {
             var hashSet = new HashSet<Ship>(liveShips.Count());
 
@@ -116,6 +116,9 @@ namespace O3.SeaBattle.Logic
 
             return DestroyShip(targetShip);
         }
+
+        public bool Finished => ! _liveShips.Any();
+
 
         private ShotResult GameAlreadyFinished() => new ShotResult { GameFinished = true };
 

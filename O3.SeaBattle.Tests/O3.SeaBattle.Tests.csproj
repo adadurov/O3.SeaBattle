@@ -16,4 +16,9 @@
     <ProjectReference Include="..\O3.SeaBattle.Service\O3.SeaBattle.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="E2E\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

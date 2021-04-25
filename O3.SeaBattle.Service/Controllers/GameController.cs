@@ -28,26 +28,44 @@ namespace O3.SeaBattle.Service.Controllers
         [HttpPost("create-matrix")]
         public ActionResult CreateMatrix([FromBody]CreateMatrixDto matrix)
         {
-            throw new NotImplementedException();
-            return ValidationProblem();
+            var maxSize = _gameService.GetMaxSize();
+            if (matrix.range < 1)
+            {
+                return ValidationProblem(
+                    $"The requested range ({matrix.range} is too small. Minimum supported: 1");
+            }
+
+            if (matrix.range > maxSize)
+            {
+                return ValidationProblem(
+                    $"The requested range ({matrix.range} is too large. Maximum supported: {maxSize}");
+            }
+
+            _gameService.SetMatrixSize(matrix.range);
+            return Ok();
         }
 
         [HttpPost("ship")]
         public ActionResult CreateShips([FromBody] CreateShipsDto shipsInfo)
         {
-            var shipSpecs = shipsInfo.Coordinates.Split(' ', System.StringSplitOptions.TrimEntries);
+            if (_gameService.IsGameInProgress)
+            {
+                return ValidationProblem(
+                    $"A game is already in progress. Complete or reset the game before creating ships.");
+            }
+
+            var shipSpecs = shipsInfo.Coordinates.Split(',', StringSplitOptions.TrimEntries);
 
             var ships = shipSpecs.Select(spec => _shipFactory.Create(spec));
 
-            //_gameService.CreateGame(ships);
-            throw new NotImplementedException();
+            _gameService.BeginGame(ships);
 
-            return ValidationProblem();
+            return Ok();
         }
 
 
         [HttpPost("shot")]
-        public ActionResult<ShotResult> Shot([FromBody] NewShotDto newShot)
+        public ActionResult<ShotResultDto> Shot([FromBody] NewShotDto newShot)
         {
             var location = _locationParser.Parse(newShot.coord);
 
@@ -57,14 +75,14 @@ namespace O3.SeaBattle.Service.Controllers
 
             if (result.Duplicate)
             {
-                return ValidationProblem("You have already fired at the specified coordinates.");
+                return ValidationProblem(
+                    $"You have already fired at the specified coordinates ({newShot.coord}).");
             }
 
-            throw new NotImplementedException();
-
-            return Ok(new ShotResult
-            {
-
+            return Ok(new ShotResultDto {
+                destroy = result.Destroyed,
+                knock = result.Knocked,
+                end = result.GameFinished
             });
         }
     }

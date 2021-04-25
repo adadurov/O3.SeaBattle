@@ -5,9 +5,9 @@ namespace O3.SeaBattle.Logic
     public class ShotCache
     {
         private readonly BitArray _bits;
-        private readonly short _cols;
+        private readonly int _cols;
 
-        public ShotCache(short rows, short cols)
+        public ShotCache(int rows, int cols)
         {
             _cols = cols;
             _bits = new BitArray(rows * cols);
