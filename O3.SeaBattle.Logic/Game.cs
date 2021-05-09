@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ardalis.GuardClauses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,23 +20,14 @@ namespace O3.SeaBattle.Logic
         private readonly IList<Ship> _liveShips;
         private readonly ShotMarksMatrix _shotMarks;
 
-        private int _shotCount;
-        private int _destroyedCount;
-        private int _knockedCount;
+        private int _statShotCount;
+        private int _statDestroyedCount;
+        private int _statKnockedCount;
 
         public Game(int size, IEnumerable<Ship> liveShips, IMatrixLocationValidator locationValidator)
         {
-            if (size < 1 || size > Game.MaxSize)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(size),
-                    $"The parameter must be greater than 0 and less than or equal to {Game.MaxSize}");
-            }
-
-            if (liveShips is null)
-            {
-                throw new ArgumentNullException(nameof(liveShips));
-            }
+            Guard.Against.OutOfRange(size, nameof(size), 1, Game.MaxSize);
+            Guard.Against.Null(liveShips, nameof(liveShips));
 
             if (!liveShips.Any())
             {
@@ -50,51 +42,82 @@ namespace O3.SeaBattle.Logic
 
             _size = size;
             _shotMarks = new ShotMarksMatrix(size, size);
-            _shotCount = 0;
-            _knockedCount = 0;
-            _destroyedCount = 0;
+            _statShotCount = 0;
+            _statKnockedCount = 0;
+            _statDestroyedCount = 0;
             _originalShipCount = _liveShips.Count;
         }
 
-        public bool IsLocationInMatrix(Cell loc) => _locationValidator.IsWithinMatrix(_size, loc);
-
         public GameStats GetStatistics() => new() {
             ShipCount = _originalShipCount,
-            Destroyed = _destroyedCount,
-            Knocked = _knockedCount,
-            ShotCount = _shotCount
+            Destroyed = _statDestroyedCount,
+            Knocked = _statKnockedCount,
+            ShotCount = _statShotCount
         };
 
         public ShotResult Shot(Cell location)
         {
-            if (!IsLocationInMatrix(location))
-                return ShotResult.InvalidShotLocation;
-            if (EverFiredOn(location))
-                return ShotResult.DuplicateShot;
-            if (!_liveShips.Any())
-                return GameAlreadyFinished();
+            var validationResult = IsShotValid(location);
+            if (validationResult.Faulted)
+            {
+                return validationResult.ResultToReturn;
+            }
 
             RememberShot(location);
-            _shotCount++;
 
+            return MissKnockOrDestroy(location);
+        }
+
+        private (bool Faulted, ShotResult ResultToReturn) IsShotValid(Cell location)
+        {
+            if (Finished)
+                return (true, GameAlreadyFinished());
+
+            if (!IsLocationInMatrix(location))
+                return (true, ShotResult.InvalidShotLocation);
+
+            if (EverFiredOn(location))
+                return (true, ShotResult.DuplicateShot);
+
+            return (false, default(ShotResult));
+        }
+
+        public bool IsLocationInMatrix(Cell loc) => _locationValidator.IsWithinMatrix(_size, loc);
+
+
+        private ShotResult MissKnockOrDestroy(Cell location)
+        {
             var targetShip = FindTargetShip(location);
-            
+
             if (targetShip is null)
+            {
                 return ShotResult.MissedShot;
+            }
 
             var shotsBefore = targetShip.AddShot();
 
             if (shotsBefore == 0)
-                _knockedCount++;
+            {
+                _statKnockedCount++;
+            }
 
             if (targetShip.IsAlive)
+            {
                 return new ShotResult { Knocked = true };
+            }
 
             return DestroyShip(targetShip);
         }
 
-        public bool Finished => ! _liveShips.Any();
+        private void RememberShot(Cell shot)
+        {
+            _shotMarks.AddShotMark(shot);
+            _statShotCount++;
+        }
 
+        private bool EverFiredOn(Cell newShot) => _shotMarks.EverFiredOn(newShot);
+
+        public bool Finished => ! _liveShips.Any();
 
         private ShotResult GameAlreadyFinished() => new ShotResult { GameFinished = true };
 
@@ -106,7 +129,7 @@ namespace O3.SeaBattle.Logic
         private ShotResult DestroyShip(Ship knockedShip)
         {
             _liveShips.Remove(knockedShip);
-            _destroyedCount++;
+            _statDestroyedCount++;
 
             var gameFinished = ! _liveShips.Any();
 
@@ -119,9 +142,5 @@ namespace O3.SeaBattle.Logic
                 Destroyed = true
             };
         }
-
-        private void RememberShot(Cell shot) => _shotMarks.AddShotMark(shot);
-
-        private bool EverFiredOn(Cell newShot) => _shotMarks.EverFiredOn(newShot);
     }
 }

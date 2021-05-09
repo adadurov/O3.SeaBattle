@@ -7,11 +7,6 @@ namespace O3.SeaBattle.Service.Services
     {
         int GetMaxSize();
 
-        bool IsGameStarted { get; }
-
-        bool IsGameFinished { get; }
-
-
         void SetMatrixSize(int size);
 
         void BeginGame(IEnumerable<Ship> ships);
