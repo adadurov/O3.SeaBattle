@@ -51,8 +51,9 @@ namespace O3.SeaBattle.Tests.Parsers
             var ship = ShipFactory.Create("1A 1A");
 
             ship.IsAlive.Should().BeTrue();
-            ship.AddShot();
+            ship.Hit();
             ship.IsAlive.Should().BeFalse();
+            ship.IsDestroyed.Should().BeTrue();
         }
 
         [Test]
@@ -61,12 +62,14 @@ namespace O3.SeaBattle.Tests.Parsers
             var ship = ShipFactory.Create("1A 4A");
 
             ship.IsAlive.Should().BeTrue();
-            ship.AddShot();
-            ship.AddShot();
-            ship.AddShot();
+            ship.Hit();
+            ship.Hit();
+            ship.Hit();
             ship.IsAlive.Should().BeTrue();
-            ship.AddShot();
+            ship.IsDestroyed.Should().BeFalse();
+            ship.Hit();
             ship.IsAlive.Should().BeFalse();
+            ship.IsDestroyed.Should().BeTrue();
         }
 
         [Test]

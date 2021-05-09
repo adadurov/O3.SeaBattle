@@ -6,6 +6,7 @@ namespace O3.SeaBattle.Logic
     {
         private readonly BitArray _bits;
         private readonly int _cols;
+        private int _marksCount = 0;
 
         public ShotMarksMatrix(int rows, int cols)
         {
@@ -13,10 +14,13 @@ namespace O3.SeaBattle.Logic
             _bits = new BitArray(rows * cols);
         }
 
+        public int MarksCount => _marksCount;
+
         public void AddShotMark(Cell location)
         {
             var index = GetIndex(location);
             _bits.Set(index, true);
+            _marksCount++;
         }
 
         public bool EverFiredOn(Cell location)
